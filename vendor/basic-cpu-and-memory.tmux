@@ -29,17 +29,14 @@ def get_dashes(perc):
 
 def info():
     mem = psutil.virtual_memory()
-    if hasattr(mem, 'cached'):
-        memused = mem.used - mem.cached
-    else:
-        memused = mem.used
 
     cpu_dashes, cpu_empty_dashes = get_dashes(psutil.cpu_percent(interval=0.1))
-    line = "%s/%sMB [%s%s] %5s%%" % (
-        str(int(memused / 1024 / 1024)),
-        str(int(mem.total / 1024 / 1024)),
-        cpu_dashes, cpu_empty_dashes,
-        psutil.cpu_percent(interval=0.1),
+    line = "{used}/{total}MB [{cpu_dashes}{cpu_empty_dashes}] {loadavg}".format (
+        used = str(int(mem.used / 1024 / 1024)),
+        total = str(int(mem.total / 1024 / 1024)),
+        cpu_dashes = cpu_dashes, cpu_empty_dashes = cpu_empty_dashes,
+        cpu_percent = psutil.cpu_percent(interval=0.1),
+        loadavg = ' '.join([str(i) for i in os.getloadavg()]),
     )
 
     return line
